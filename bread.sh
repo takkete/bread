@@ -1,4 +1,6 @@
 a=`perl -e '
+use Math::Trig;
+@colors=("black","brown","red","orange","yellow","green","blue","purple","gray","white");
 foreach(split / /, "0,60 62,125 197,125 324,60"){
 	my($x,$w) = split /,/,$_;
 	print qq#<rect x="$x" y="0" width="$w" height="650" stroke="black" fill="none"></rect>#;
@@ -19,7 +21,7 @@ foreach $ch (split //,"abcdefghij"){
 for($x=1;$x<=14;$x++){
 	for($y=1;$y<=30;$y++){
 		my($xx,$yy) = get_board_xxyy($x,$y);
-		print qq#<rect x="$xx" y="$yy" width="9" height="9" fill="glay"></rect>#;
+		print qq#<rect x="$xx" y="$yy" width="9" height="9" fill="black"></rect>#;
 		if($x == 5 or $x == 14){
 			$xx -=10 if($x == 5);
 			$xx +=20 if($x == 14);;
@@ -28,6 +30,31 @@ for($x=1;$x<=14;$x++){
 		}
 	}
 }
+
+foreach (@ARGV){
+	s/a(\d+)/5,$1/g;
+	s/b(\d+)/6,$1/g;
+	s/c(\d+)/7,$1/g;
+	s/d(\d+)/8,$1/g;
+	s/e(\d+)/9,$1/g;
+	s/f(\d+)/10,$1/g;
+	s/g(\d+)/11,$1/g;
+	s/h(\d+)/12,$1/g;
+	s/i(\d+)/13,$1/g;
+	s/j(\d+)/14,$1/g;
+	put_resistor(split /,/,$_) if(/R$/);
+	put_wire(split /,/,$_) if(/W$/);
+	put_led(split /,/,$_) if(/L$/);
+	put_ic(split /,/,$_) if(/I$/);
+}
+put_wire("red",1,1, 5,1);
+put_wire("black",2,11, 8,21);
+put_resistor(12,15, 12,20, 1000);
+put_resistor(6,5, 10,8, 20000);
+put_led("red",6,24, 11,26);
+put_led("blue",6,28, 11,28);
+put_led("yellow",6,29, 11,29);
+put_ic(9,26, 10,29);
 
 sub put_ic{
 	my($x1,$y1, $x2,$y2) = @_;
@@ -50,7 +77,15 @@ sub put_ic{
 		print qq#<rect x="$ix" y="$iy" width="7" height="10" fill="silver"></rect>#;
 	}
 
+	$arc_xx2 = $xx1+$w/2;
+	$arc_yy2 = $yy1+10;
+	$arc_xx1 = $arc_xx2-10;
+	$arc_yy1 = $yy1;
+	$arc_xx3 = $arc_xx2+10;
+	$arc_yy3 = $yy1;
+	print qq#<path d="M $arc_xx1 $arc_yy1 Q $arc_xx1 $arc_yy2 $arc_xx2 $arc_yy2 Q $arc_xx3 $arc_yy2 $arc_xx3 $arc_yy3" stroke="white" fill="gray"/>#;
 }
+
 sub put_wire{
 	my($color,$x1,$y1, $x2,$y2) = @_;
 	my($xx1,$yy1) = get_xxyy($x1,$y1);
@@ -58,32 +93,62 @@ sub put_wire{
 	print qq#<circle cx="$xx1" cy="$yy1" r="3" fill="white" />#;
 	print qq#<circle cx="$xx2" cy="$yy2" r="3" fill="white" />#;
 	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="$color" stroke-width="8"/>#;
-
 }
-sub put_led{
+
+sub put_stripedwire{
 	my($x1,$y1, $x2,$y2) = @_;
 	my($xx1,$yy1) = get_xxyy($x1,$y1);
 	my($xx2,$yy2) = get_xxyy($x2,$y2);
-	my($xc,$yc) = get_center($xx1,$yy1,$xx2,$yy2);
+	my($xxc,$yyc) = get_center($xx1,$yy1,$xx2,$yy2);
+	my($rr) = get_rr($xx1,$yy1,$xx2,$yy2);
 	print qq#<circle cx="$xx1" cy="$yy1" r="3" fill="white" />#;
 	print qq#<circle cx="$xx2" cy="$yy2" r="3" fill="white" />#;
 	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="black" stroke-width="5"/>#;
 	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="silver" stroke-width="4"/>#;
-	print qq#<circle cx="$xc" cy="$yc" r="8" stroke="red" stroke-width="2" fill="pink" />#;
+	return ($xxc,$yyc,$rr);
+}
 
+sub put_resistor{
+	my $ohm = @_[4];
+	my($xxc,$yyc,$rr) = put_stripedwire(@_);
+	@resi = split //,$ohm;
+
+	my ($xx1,$yy1) = ($xxc-20,$yyc-5);
+	my ($xxb1,$yyb1,$cb1) = ($xxc-15,$yyc-5,$colors[$resi[0]]);
+	my ($xxb2,$yyb2,$cb2) = ($xxc-7,$yyc-5,$colors[$resi[1]]);
+	my ($xxb3,$yyb3,$cb3) = ($xxc+1,$yyc-5,$colors[$#resi]);
+	my ($xxb4,$yyb4,$cb4) = ($xxc+11,$yyc-5,"gold");
+
+	print qq#<rect x="$xx1" y="$yy1" width="40" height="10" stroke="black" fill="white" transform="rotate($rr,$xxc,$yyc)"></rect>#;
+	print qq#<rect x="$xxb1" y="$yyb1" width="4" height="10" fill="$cb1" transform="rotate($rr,$xxc,$yyc)"></rect>#;
+	print qq#<rect x="$xxb2" y="$yyb2" width="4" height="10" fill="$cb2" transform="rotate($rr,$xxc,$yyc)"></rect>#;
+	print qq#<rect x="$xxb3" y="$yyb3" width="4" height="10" fill="$cb3" transform="rotate($rr,$xxc,$yyc)"></rect>#;
+	print qq#<rect x="$xxb4" y="$yyb4" width="4" height="10" fill="$cb4" transform="rotate($rr,$xxc,$yyc)"></rect>#;
+}
+
+sub put_led{
+	my $color = shift;
+	my($xxc,$yyc) = put_stripedwire(@_);
+	print qq#<circle cx="$xxc" cy="$yyc" r="9" fill="$color" />#;
 }
 
 sub get_center{
-	my($x1,$y1,$x2,$y2) = @_;
+	my($xx1,$yy1,$xx2,$yy2) = @_;
+	my $xxc = $xx1 + ($xx2 - $xx1)/2;
+	my $yyc = $yy1 + ($yy2 - $yy1)/2;
+	return ($xxc,$yyc);
+}
 
-	my $x = $x1 + ($x2 - $x1)/2;
-	my $y = $y1 + ($y2 - $y1)/2;
-	return ($x,$y);
+sub get_rr{
+	my($xx1,$yy1,$xx2,$yy2) = @_;
+	my($ww, $hh) = ($xx2-$xx1, $yy2-$yy1);
+	my $rr = rad2deg atan2($ww,$hh);
+	return 90 - $rr;
 }
 
 sub get_xxyy{
-	my($x,$y) = get_board_xxyy(@_);
-	return ($x+4,$y+4);
+	my($xx,$yy) = get_board_xxyy(@_);
+	return ($xx+4,$yy+4);
 }
 
 sub get_board_xxyy{
@@ -102,8 +167,7 @@ sub get_board_xxyy{
 	}
 	return ($xx,$yy);
 }
-'`
-
+' $@`
 
 cat <<EOL > /tmp/tmp.svg
 <svg width="384" height="650">
