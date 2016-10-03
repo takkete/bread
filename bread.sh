@@ -1,22 +1,66 @@
 a=`perl -e '
+
 use Math::Trig;
 @colors=("black","brown","red","orange","yellow","green","blue","purple","gray","white");
-foreach(split / /, "0,60 62,125 197,125 324,60"){
-	my($x,$w) = split /,/,$_;
-	print qq#<rect x="$x" y="0" width="$w" height="650" stroke="black" fill="none"></rect>#;
-}
-foreach(split / /, "8:red 50:blue 334:red 376:blue"){
-	my($x,$c) = split /:/,$_;
-	print qq#<line x1="$x" y1="25" x2="$x" y2="620" stroke="$c" stroke-width="2"/>#;
-}
 
-$x=90;
-foreach $ch (split //,"abcdefghij"){
-	print qq#<text x="$x" y="20" font-size="15" text-anchor="middle">$ch</text>#;
-	print qq#<text x="$x" y="638" font-size="15" text-anchor="middle">$ch</text>#;
-	$x += 20;
-	$x += 25 if($ch eq "e");
-}
+$xx_offset=300;
+$yy_offset=0;
+$ww=384+$xx_offset;
+$hh=650+$yy_offset;
+
+my ($xx,$yy) = get_board_xxyy(0,0);
+my ($box1_xx1,$box1_yy1) = ($xx+5,$yy-15);
+my ($box2_xx1) = $box1_xx1 + 62;
+my ($box3_xx1) = $box1_xx1 + 197;
+my ($box4_xx1) = $box1_xx1 + 324;
+my ($red1_xx1) = $box1_xx1 + 8;
+my ($red2_xx1) = $box1_xx1 + 334;
+my ($blue1_xx1) = $box1_xx1 + 50;
+my ($blue2_xx1) = $box1_xx1 + 376;
+my ($a_xx,$a_yy1,$a_yy2) = ($box1_xx1 + 90, $box1_yy1+20, $box1_yy1+638);
+my ($b_xx,$b_yy1,$b_yy2) = ($box1_xx1 +110, $box1_yy1+20, $box1_yy1+638);
+my ($c_xx,$c_yy1,$c_yy2) = ($box1_xx1 +130, $box1_yy1+20, $box1_yy1+638);
+my ($d_xx,$d_yy1,$d_yy2) = ($box1_xx1 +150, $box1_yy1+20, $box1_yy1+638);
+my ($e_xx,$e_yy1,$e_yy2) = ($box1_xx1 +170, $box1_yy1+20, $box1_yy1+638);
+my ($f_xx,$f_yy1,$f_yy2) = ($box1_xx1 +215, $box1_yy1+20, $box1_yy1+638);
+my ($g_xx,$g_yy1,$g_yy2) = ($box1_xx1 +235, $box1_yy1+20, $box1_yy1+638);
+my ($h_xx,$h_yy1,$h_yy2) = ($box1_xx1 +255, $box1_yy1+20, $box1_yy1+638);
+my ($i_xx,$i_yy1,$i_yy2) = ($box1_xx1 +275, $box1_yy1+20, $box1_yy1+638);
+my ($j_xx,$j_yy1,$j_yy2) = ($box1_xx1 +295, $box1_yy1+20, $box1_yy1+638);
+
+print qq#<svg width="$ww" height="$hh">#;
+print qq#<rect x="0" y="0" width="$ww" height="$hh" fill="white"></rect>#;
+
+print qq#<rect x="$box1_xx1" y="$yy1" width="60" height="650" stroke="black" fill="none"></rect>#;
+print qq#<rect x="$box2_xx1" y="$yy1" width="125" height="650" stroke="black" fill="none"></rect>#;
+print qq#<rect x="$box3_xx1" y="$yy1" width="125" height="650" stroke="black" fill="none"></rect>#;
+print qq#<rect x="$box4_xx1" y="$yy1" width="60" height="650" stroke="black" fill="none"></rect>#;
+
+print qq#<line x1="$red1_xx1" y1="25" x2="$red1_xx1" y2="620" stroke="red" stroke-width="2"/>#;
+print qq#<line x1="$red2_xx1" y1="25" x2="$red2_xx1" y2="620" stroke="red" stroke-width="2"/>#;
+print qq#<line x1="$blue1_xx1" y1="25" x2="$blue1_xx1" y2="620" stroke="blue" stroke-width="2"/>#;
+print qq#<line x1="$blue2_xx1" y1="25" x2="$blue2_xx1" y2="620" stroke="blue" stroke-width="2"/>#;
+
+print qq#<text x="$a_xx" y="$a_yy1" font-size="15" text-anchor="middle">a</text>#;
+print qq#<text x="$b_xx" y="$b_yy1" font-size="15" text-anchor="middle">b</text>#;
+print qq#<text x="$c_xx" y="$c_yy1" font-size="15" text-anchor="middle">c</text>#;
+print qq#<text x="$d_xx" y="$d_yy1" font-size="15" text-anchor="middle">d</text>#;
+print qq#<text x="$e_xx" y="$e_yy1" font-size="15" text-anchor="middle">e</text>#;
+print qq#<text x="$f_xx" y="$f_yy1" font-size="15" text-anchor="middle">f</text>#;
+print qq#<text x="$g_xx" y="$g_yy1" font-size="15" text-anchor="middle">g</text>#;
+print qq#<text x="$h_xx" y="$h_yy1" font-size="15" text-anchor="middle">h</text>#;
+print qq#<text x="$i_xx" y="$i_yy1" font-size="15" text-anchor="middle">i</text>#;
+print qq#<text x="$j_xx" y="$j_yy1" font-size="15" text-anchor="middle">j</text>#;
+print qq#<text x="$a_xx" y="$a_yy2" font-size="15" text-anchor="middle">a</text>#;
+print qq#<text x="$b_xx" y="$b_yy2" font-size="15" text-anchor="middle">b</text>#;
+print qq#<text x="$c_xx" y="$c_yy2" font-size="15" text-anchor="middle">c</text>#;
+print qq#<text x="$d_xx" y="$d_yy2" font-size="15" text-anchor="middle">d</text>#;
+print qq#<text x="$e_xx" y="$e_yy2" font-size="15" text-anchor="middle">e</text>#;
+print qq#<text x="$f_xx" y="$f_yy2" font-size="15" text-anchor="middle">f</text>#;
+print qq#<text x="$g_xx" y="$g_yy2" font-size="15" text-anchor="middle">g</text>#;
+print qq#<text x="$h_xx" y="$h_yy2" font-size="15" text-anchor="middle">h</text>#;
+print qq#<text x="$i_xx" y="$i_yy2" font-size="15" text-anchor="middle">i</text>#;
+print qq#<text x="$j_xx" y="$j_yy2" font-size="15" text-anchor="middle">j</text>#;
 
 for($x=1;$x<=14;$x++){
 	for($y=1;$y<=30;$y++){
@@ -46,15 +90,29 @@ foreach (@ARGV){
 	put_wire(split /,/,$_) if(/W$/);
 	put_led(split /,/,$_) if(/L$/);
 	put_ic(split /,/,$_) if(/I$/);
+	put_pinheader(split /,/,$_) if(/P$/);
 }
-put_wire("red",1,1, 5,1);
-put_wire("black",2,11, 8,21);
-put_resistor(12,15, 12,20, 1000);
-put_resistor(6,5, 10,8, 20000);
-put_led("red",6,24, 11,26);
-put_led("blue",6,28, 11,28);
-put_led("yellow",6,29, 11,29);
-put_ic(9,26, 10,29);
+
+print qq#</svg>#;
+
+sub put_pinheader{
+	my($x1,$y1,$x2,$y2) = @_;
+	my($xx1,$yy1,$xx2,$yy2) = get_board_xxyy(@_);
+
+	my($p_xx1,$p_yy1) = ($xx1 - 7, $yy - 7);
+	print qq#<rect x="$p_xx1" y="$p_yy1" width="40" height="400" stroke="black" fill="black"></rect>#;
+
+	for($i=$x1;$i<=$x2;$i++){
+		for($j=$y1;$j<=$y2;$j++){
+			$p_xx = $p_xx1 + ($i-21)*20+1;
+			$p_yy = $p_yy1 + ($j-1)*20+1;
+			$c_xx = $p_xx + 9;
+			$c_yy = $p_yy + 9;
+	print qq#<rect x="$p_xx" y="$p_yy" width="18" height="18" stroke="white" fill="none"></rect>#;
+	print qq#<circle cx="$c_xx" cy="$c_yy" r="3" fill="gold" />#;
+		}
+	}
+}
 
 sub put_ic{
 	my($x1,$y1, $x2,$y2) = @_;
@@ -157,22 +215,25 @@ sub get_board_xxyy{
 	$y-=1;
 	if($x < 4){
 		my $w = 20;
-		$xx = $x * $w + 15 + ($x >= 2)*285;
+		$xx = $x * $w + 15 + ($x >= 2)*285 + $xx_offset;
 		$y = 0 if($y >= 25);
-		$yy = $y * 20 + 35 + int($y /5) * 20;
-	}else{
+		$yy = $y * 20 + 35 + int($y /5) * 20 + $yy_offset;
+	}elsif($x < 20){
 		my $w = 19;
-		$xx = $x * $w + 10 + ($x >= 9)*32;
-		$yy = $y * 20 + 30;
+		$xx = $x * $w + 10 + ($x >= 9)*32 + $xx_offset;
+		$yy = $y * 20 + 30 + $yy_offset;
+	}else{
+		my $w = 20;
+		$xx = ($x-20) * $w + 60;
+		$yy = $y   * 20 + 60;
 	}
 	return ($xx,$yy);
 }
 ' $@`
 
 cat <<EOL > /tmp/tmp.svg
-<svg width="384" height="650">
-<rect x="0" y="0" width="384" height="650" fill="white"></rect>
+
 $a
-</svg>
+
 EOL
-inkscape -z -e out.png /tmp/tmp.svg -w 384 -h 600
+inkscape -z -e out.png /tmp/tmp.svg
