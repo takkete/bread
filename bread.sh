@@ -3,7 +3,7 @@ a=`perl -e '
 use Math::Trig;
 @colors=("black","brown","red","orange","yellow","green","blue","purple","gray","white");
 
-$xx_offset=300;
+$xx_offset=400;
 $yy_offset=0;
 $ww=384+$xx_offset;
 $hh=650+$yy_offset;
@@ -75,7 +75,9 @@ for($x=1;$x<=14;$x++){
 	}
 }
 
-foreach (@ARGV){
+foreach $arg (@ARGV){
+	foreach (split /\n/,$arg){
+	next if /^#/;
 	s/a(\d+)/5,$1/g;
 	s/b(\d+)/6,$1/g;
 	s/c(\d+)/7,$1/g;
@@ -86,16 +88,44 @@ foreach (@ARGV){
 	s/h(\d+)/12,$1/g;
 	s/i(\d+)/13,$1/g;
 	s/j(\d+)/14,$1/g;
-	put_resistor(split /,/,$_) if(/R$/);
-	put_wire(split /,/,$_) if(/W$/);
-	put_led(split /,/,$_) if(/L$/);
-	put_ic(split /,/,$_) if(/I$/);
-	put_pinheader(split /,/,$_) if(/P$/);
+	put_resistor(split /,/,$_) if(/^RESISTOR\b/);
+	put_wire(split /,/,$_) if(/^WIRE\b/);
+	put_led(split /,/,$_) if(/^LED\b/);
+	put_ic(split /,/,$_) if(/^IC\b/);
+	put_pinheader(split /,/,$_) if(/^PIN\b/);
+	put_pinlabel(split /,/,$_) if(/^LABEL\b/);
+	put_pinwire(split /,/,$_) if(/^PINWIRE\b/);
+	}
 }
 
 print qq#</svg>#;
 
+sub put_pinwire{
+	shift;
+	my($color,$x1,$y1, $x2,$y2) = @_;
+	my($xx1,$yy1) = get_xxyy($x1,$y1);
+	my($xx2,$yy2) = get_xxyy($x2,$y2);
+	print qq#<circle cx="$xx1" cy="$yy1" r="4" fill="white" />#;
+	print qq#<circle cx="$xx2" cy="$yy2" r="4" fill="white" />#;
+	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="$color" stroke-width="12" stroke-opacity="0.5" />#;
+}
+sub put_pinlabel{
+	shift;
+	my($color,$x,$y,$text) = @_;
+	my($xx,$yy) = get_xxyy($x,$y);
+	my $l_xx;
+	my $l_yy = $yy + 5;
+	if($x == 21){
+		$l_xx = $xx - 20;
+		print qq#<text x="$l_xx" y="$l_yy" font-size="15" text-anchor="end" stroke="$color" fill="none" >$text</text>#;
+	}else{
+		$l_xx = $xx + 20;
+		print qq#<text x="$l_xx" y="$l_yy" font-size="15" text-anchor="start" stroke="$color" fill="none" >$text</text>#;
+	}
+}
+
 sub put_pinheader{
+	shift;
 	my($x1,$y1,$x2,$y2) = @_;
 	my($xx1,$yy1,$xx2,$yy2) = get_board_xxyy(@_);
 
@@ -115,6 +145,7 @@ sub put_pinheader{
 }
 
 sub put_ic{
+	shift;
 	my($x1,$y1, $x2,$y2) = @_;
 	my($xx1,$yy1) = get_xxyy($x1,$y1);
 	my($xx2,$yy2) = get_xxyy($x2,$y2);
@@ -145,6 +176,7 @@ sub put_ic{
 }
 
 sub put_wire{
+	shift;
 	my($color,$x1,$y1, $x2,$y2) = @_;
 	my($xx1,$yy1) = get_xxyy($x1,$y1);
 	my($xx2,$yy2) = get_xxyy($x2,$y2);
@@ -167,6 +199,7 @@ sub put_stripedwire{
 }
 
 sub put_resistor{
+	shift;
 	my $ohm = @_[4];
 	my($xxc,$yyc,$rr) = put_stripedwire(@_);
 	@resi = split //,$ohm;
@@ -185,6 +218,7 @@ sub put_resistor{
 }
 
 sub put_led{
+	shift;
 	my $color = shift;
 	my($xxc,$yyc) = put_stripedwire(@_);
 	print qq#<circle cx="$xxc" cy="$yyc" r="9" fill="$color" />#;
@@ -224,8 +258,8 @@ sub get_board_xxyy{
 		$yy = $y * 20 + 30 + $yy_offset;
 	}else{
 		my $w = 20;
-		$xx = ($x-20) * $w + 60;
-		$yy = $y   * 20 + 60;
+		$xx = ($x-20) * $w + 120;
+		$yy = $y   * 20 + 60 + 40;
 	}
 	return ($xx,$yy);
 }
