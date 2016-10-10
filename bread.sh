@@ -3,10 +3,13 @@ a=`perl -e '
 use Math::Trig;
 @colors=("black","brown","red","orange","yellow","green","blue","purple","gray","white");
 
-$xx_offset=400;
+my ($bread_ww,$bread_hh) = get_board_xxyy(10,30);
+$bread_hh +=30;
+
+$xx_offset=420;
 $yy_offset=0;
 $ww=384+$xx_offset;
-$hh=650+$yy_offset;
+$hh=$bread_hh+$yy_offset;
 
 my ($xx,$yy) = get_board_xxyy(0,0);
 my ($box1_xx1,$box1_yy1) = ($xx+5,$yy-15);
@@ -17,58 +20,49 @@ my ($red1_xx1) = $box1_xx1 + 8;
 my ($red2_xx1) = $box1_xx1 + 334;
 my ($blue1_xx1) = $box1_xx1 + 50;
 my ($blue2_xx1) = $box1_xx1 + 376;
-my ($a_xx,$a_yy1,$a_yy2) = ($box1_xx1 + 90, $box1_yy1+20, $box1_yy1+638);
-my ($b_xx,$b_yy1,$b_yy2) = ($box1_xx1 +110, $box1_yy1+20, $box1_yy1+638);
-my ($c_xx,$c_yy1,$c_yy2) = ($box1_xx1 +130, $box1_yy1+20, $box1_yy1+638);
-my ($d_xx,$d_yy1,$d_yy2) = ($box1_xx1 +150, $box1_yy1+20, $box1_yy1+638);
-my ($e_xx,$e_yy1,$e_yy2) = ($box1_xx1 +170, $box1_yy1+20, $box1_yy1+638);
-my ($f_xx,$f_yy1,$f_yy2) = ($box1_xx1 +215, $box1_yy1+20, $box1_yy1+638);
-my ($g_xx,$g_yy1,$g_yy2) = ($box1_xx1 +235, $box1_yy1+20, $box1_yy1+638);
-my ($h_xx,$h_yy1,$h_yy2) = ($box1_xx1 +255, $box1_yy1+20, $box1_yy1+638);
-my ($i_xx,$i_yy1,$i_yy2) = ($box1_xx1 +275, $box1_yy1+20, $box1_yy1+638);
-my ($j_xx,$j_yy1,$j_yy2) = ($box1_xx1 +295, $box1_yy1+20, $box1_yy1+638);
 
 print qq#<svg width="$ww" height="$hh">#;
 print qq#<rect x="0" y="0" width="$ww" height="$hh" fill="white"></rect>#;
 
-print qq#<rect x="$box1_xx1" y="$yy1" width="60" height="650" stroke="black" fill="none"></rect>#;
-print qq#<rect x="$box2_xx1" y="$yy1" width="125" height="650" stroke="black" fill="none"></rect>#;
-print qq#<rect x="$box3_xx1" y="$yy1" width="125" height="650" stroke="black" fill="none"></rect>#;
-print qq#<rect x="$box4_xx1" y="$yy1" width="60" height="650" stroke="black" fill="none"></rect>#;
+print qq#<rect x="$box1_xx1" y="$yy1" width="60" height="$bread_hh" stroke="black" fill="none"></rect>#;
+print qq#<rect x="$box2_xx1" y="$yy1" width="125" height="$bread_hh" stroke="black" fill="none"></rect>#;
+print qq#<rect x="$box3_xx1" y="$yy1" width="125" height="$bread_hh" stroke="black" fill="none"></rect>#;
+print qq#<rect x="$box4_xx1" y="$yy1" width="60" height="$bread_hh" stroke="black" fill="none"></rect>#;
 
-print qq#<line x1="$red1_xx1" y1="25" x2="$red1_xx1" y2="620" stroke="red" stroke-width="2"/>#;
-print qq#<line x1="$red2_xx1" y1="25" x2="$red2_xx1" y2="620" stroke="red" stroke-width="2"/>#;
-print qq#<line x1="$blue1_xx1" y1="25" x2="$blue1_xx1" y2="620" stroke="blue" stroke-width="2"/>#;
-print qq#<line x1="$blue2_xx1" y1="25" x2="$blue2_xx1" y2="620" stroke="blue" stroke-width="2"/>#;
+my $yy2 = $bread_hh - 20;
 
-print qq#<text x="$a_xx" y="$a_yy1" font-size="15" text-anchor="middle">a</text>#;
-print qq#<text x="$b_xx" y="$b_yy1" font-size="15" text-anchor="middle">b</text>#;
-print qq#<text x="$c_xx" y="$c_yy1" font-size="15" text-anchor="middle">c</text>#;
-print qq#<text x="$d_xx" y="$d_yy1" font-size="15" text-anchor="middle">d</text>#;
-print qq#<text x="$e_xx" y="$e_yy1" font-size="15" text-anchor="middle">e</text>#;
-print qq#<text x="$f_xx" y="$f_yy1" font-size="15" text-anchor="middle">f</text>#;
-print qq#<text x="$g_xx" y="$g_yy1" font-size="15" text-anchor="middle">g</text>#;
-print qq#<text x="$h_xx" y="$h_yy1" font-size="15" text-anchor="middle">h</text>#;
-print qq#<text x="$i_xx" y="$i_yy1" font-size="15" text-anchor="middle">i</text>#;
-print qq#<text x="$j_xx" y="$j_yy1" font-size="15" text-anchor="middle">j</text>#;
-print qq#<text x="$a_xx" y="$a_yy2" font-size="15" text-anchor="middle">a</text>#;
-print qq#<text x="$b_xx" y="$b_yy2" font-size="15" text-anchor="middle">b</text>#;
-print qq#<text x="$c_xx" y="$c_yy2" font-size="15" text-anchor="middle">c</text>#;
-print qq#<text x="$d_xx" y="$d_yy2" font-size="15" text-anchor="middle">d</text>#;
-print qq#<text x="$e_xx" y="$e_yy2" font-size="15" text-anchor="middle">e</text>#;
-print qq#<text x="$f_xx" y="$f_yy2" font-size="15" text-anchor="middle">f</text>#;
-print qq#<text x="$g_xx" y="$g_yy2" font-size="15" text-anchor="middle">g</text>#;
-print qq#<text x="$h_xx" y="$h_yy2" font-size="15" text-anchor="middle">h</text>#;
-print qq#<text x="$i_xx" y="$i_yy2" font-size="15" text-anchor="middle">i</text>#;
-print qq#<text x="$j_xx" y="$j_yy2" font-size="15" text-anchor="middle">j</text>#;
+print qq#<line x1="$red1_xx1" y1="25" x2="$red1_xx1" y2="$yy2" stroke="red" stroke-width="2"/>#;
+print qq#<line x1="$red2_xx1" y1="25" x2="$red2_xx1" y2="$yy2" stroke="red" stroke-width="2"/>#;
+print qq#<line x1="$blue1_xx1" y1="25" x2="$blue1_xx1" y2="$yy2" stroke="blue" stroke-width="2"/>#;
+print qq#<line x1="$blue2_xx1" y1="25" x2="$blue2_xx1" y2="$yy2" stroke="blue" stroke-width="2"/>#;
 
-for($x=1;$x<=14;$x++){
-	for($y=1;$y<=30;$y++){
+
+@moji = ("a","b","c","d","e","f","g","h","i","j");
+for($y=1;$y<=30;$y++){
+	for($x=1;$x<=14;$x++){
 		my($xx,$yy) = get_board_xxyy($x,$y);
 		print qq#<rect x="$xx" y="$yy" width="9" height="9" fill="black"></rect>#;
-		if($x == 5 or $x == 14){
-			$xx -=10 if($x == 5);
-			$xx +=20 if($x == 14);;
+		if($x > 4 and $y == 1){
+			$ch = shift @moji;
+			push @moji,$ch;
+			$ch_yy = $yy -5;
+			$ch_xx = $xx +5;
+			print qq#<text x="$ch_xx" y="$ch_yy" font-size="14" text-anchor="middle">$ch</text>#;
+		}
+		if($x > 4 and $y == 30){
+			$ch = shift @moji;
+			push @moji,$ch;
+			$ch_yy = $yy +25;
+			$ch_xx = $xx +5;
+			print qq#<text x="$ch_xx" y="$ch_yy" font-size="14" text-anchor="middle">$ch</text>#;
+		}
+		if($x == 5){
+			$xx -=10;
+			$yy +=10;
+			print qq#<text x="$xx" y="$yy" font-size="13" text-anchor="middle">$y</text>#;
+		}
+		if($x == 14){
+			$xx +=20;
 			$yy +=10;
 			print qq#<text x="$xx" y="$yy" font-size="13" text-anchor="middle">$y</text>#;
 		}
@@ -249,16 +243,18 @@ sub get_board_xxyy{
 	$y-=1;
 	if($x < 4){
 		my $w = 20;
+		my $h = 18;
 		$xx = $x * $w + 15 + ($x >= 2)*285 + $xx_offset;
 		$y = 0 if($y >= 25);
-		$yy = $y * 20 + 35 + int($y /5) * 20 + $yy_offset;
+		$yy = $y * $h + 35 + int($y /5) * 20 + $yy_offset;
 	}elsif($x < 20){
 		my $w = 19;
+		my $h = 18;
 		$xx = $x * $w + 10 + ($x >= 9)*32 + $xx_offset;
-		$yy = $y * 20 + 30 + $yy_offset;
+		$yy = $y * $h + 30 + $yy_offset;
 	}else{
 		my $w = 20;
-		$xx = ($x-20) * $w + 120;
+		$xx = ($x-20) * $w + 140;
 		$yy = $y   * 20 + 60 + 40;
 	}
 	return ($xx,$yy);
