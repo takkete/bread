@@ -99,9 +99,10 @@ sub put_pinwire{
 	my($color,$x1,$y1, $x2,$y2) = @_;
 	my($xx1,$yy1) = get_xxyy($x1,$y1);
 	my($xx2,$yy2) = get_xxyy($x2,$y2);
-	print qq#<circle cx="$xx1" cy="$yy1" r="4" fill="white" />#;
 	print qq#<circle cx="$xx2" cy="$yy2" r="4" fill="white" />#;
 	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="$color" stroke-width="12" stroke-opacity="0.5" />#;
+	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="$color" stroke-width="1"/>#;
+	print qq#<circle cx="$xx1" cy="$yy1" r="5" fill="white" />#;
 }
 sub put_pinlabel{
 	shift;
@@ -176,7 +177,7 @@ sub put_wire{
 	my($xx2,$yy2) = get_xxyy($x2,$y2);
 	print qq#<circle cx="$xx1" cy="$yy1" r="3" fill="white" />#;
 	print qq#<circle cx="$xx2" cy="$yy2" r="3" fill="white" />#;
-	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="$color" stroke-width="8"/>#;
+	print qq#<line x1="$xx1" y1="$yy1" x2="$xx2" y2="$yy2" stroke="$color" stroke-width="7"/>#;
 }
 
 sub put_stripedwire{
