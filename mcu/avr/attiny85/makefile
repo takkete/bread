@@ -1,10 +1,10 @@
-test: test.c
-	avr-gcc -O2 -mmcu=attiny85 -DF_CPU=1000000UL -c -o test.o test.c
-	avr-gcc -O2 -mmcu=attiny85 test.o -o test
-	avr-objcopy -j .text -j .data -O ihex test test.hex
+hello: hello.c
+	avr-gcc -O2 -mmcu=attiny85 -DF_CPU=1000000UL -c -o hello.o hello.c
+	avr-gcc -O2 -mmcu=attiny85 hello.o -o hello
+	avr-objcopy -j .text -j .data -O ihex hello hello.hex
 
-testwrite:
-	avrdude -p t85 -c linuxgpio -U flash:w:test.hex;echo DONE
+write:
+	avrdude -p t85 -c linuxgpio -U flash:w:hello.hex;echo DONE
 
 clean:
-	rm test.o test.hex test
+	rm hello.o hello.hex hello
